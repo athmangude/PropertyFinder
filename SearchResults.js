@@ -12,6 +12,8 @@ var {
     Component
 } = React;
 
+var PropertyView = require('./PropertyView');
+
 class SearchResults extends Component {
     constructor(props) {
         super(props);
@@ -25,6 +27,12 @@ class SearchResults extends Component {
 
     rowPressed(propertyGuid) {
         var property = this.props.listings.filter((prop) => prop.guid === propertyGuid)[0];
+
+        this.props.navigator.push({
+            title: 'Property',
+            component: PropertyView,
+            passProps: { property: property }
+        });
     }
 
     renderRow(rowData, sectionID, rowID) {
