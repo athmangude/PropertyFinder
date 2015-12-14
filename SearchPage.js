@@ -13,6 +13,8 @@ var {
     Component
 } = React;
 
+var SearchResults = require('./SearchResults');
+
 function urlForQueryAndPage(key, value, pageNumber) {
     var data = {
         // place_name: value,
@@ -80,7 +82,11 @@ class SearchPage extends React.Component {
         });
 
         if (response.application_response_code.substr(0, 1) === '1') {
-            console.log('Properties Found: '+ response.listings.length);
+            this.props.navigator.push({
+                title: 'Results',
+                component: SearchResults,
+                passProps: {listings: response.listings}
+            });
         } else {
             this.setState({
                 message: 'Location not recognized; please try again'
