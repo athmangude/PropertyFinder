@@ -12,10 +12,11 @@ var {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS
+  NavigatorIOS,
+  Component
 } = React;
 
-class HelloWorld extends React.Component {
+class HelloWorld extends Component {
     constructor() {
         super();
     }
@@ -27,7 +28,7 @@ class HelloWorld extends React.Component {
     }
 }
 
-class PropertyFinder extends React.Component {
+class PropertyFinder extends Component {
     constructor() {
         super();
     }
