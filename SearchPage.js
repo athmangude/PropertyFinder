@@ -13,12 +13,89 @@ var {
     Component
 } = React;
 
+function urlForQueryAndPage(key, value, pageNumber) {
+    var data = {
+        // place_name: value,
+        pretty: '1',
+        country: 'uk',
+        listing_type: 'buy',
+        action: 'search_listings',
+        encoding: 'json',
+        pageNumber: pageNumber
+    };
+
+    data[key] = value;
+
+    var queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
+
+    return 'http://api.nestoria.co.uk/api?'+queryString;
+}
+
 class SearchPage extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            searchString: 'london',
+            isLoading: false,
+            message: ''
+        }
+    }
+
+    onSearchTextChanged(event) {
+        this.setState({
+            searchString: event.nativeEvent.text
+        });
+    }
+
+    onSearchPressed() {
+        console.log('searchPressed');
+        var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
+        this._executeQuery(query);
+    }
+
+    _executeQuery(query) {
+        console.log(query);
+        this.setState({
+            isLoading: true
+        });
+
+        fetch(query)
+            .then((response) => response.json())
+            .then((json) => {
+                this._handleResponse(json.response)
+            })
+            .catch((error) => {
+                this.setState({
+                    isLoading: false,
+                    message: 'Something went wrong' + error
+                });
+            });
+    }
+
+    _handleResponse(response) {
+        this.setState({
+            isLoading: false,
+            message: ''
+        });
+
+        if (response.application_response_code.substr(0, 1) === '1') {
+            console.log('Properties Found: '+ response.listings.length);
+        } else {
+            this.setState({
+                message: 'Location not recognized; please try again'
+            });
+        }
     }
 
     render() {
+
+        var spinner = this.state.isLoading ?
+            ( <ActivityIndicatorIOS
+                hidden='true'
+                size='large' /> ) :
+            ( <View /> );
+
         return (
             <View style={styles.container}>
                 <Text style={styles.description}>
@@ -30,11 +107,13 @@ class SearchPage extends React.Component {
                 <View style={styles.flowRight}>
                     <TextInput
                         style={styles.searchInput}
+                        value={this.state.searchString}
+                        onChange={this.onSearchTextChanged.bind(this)}
                         placeholder="Search via name or postcode" />
                     <TouchableHighlight
                         style={styles.button}
                         underlayColor="#99d9f4">
-                        <Text style={styles.buttonText}>Go</Text>
+                        <Text style={styles.buttonText} onPress={this.onSearchPressed.bind(this)}>Go</Text>
                     </TouchableHighlight>
                 </View>
                 <TouchableHighlight
@@ -45,6 +124,10 @@ class SearchPage extends React.Component {
                 <Image
                     source={require('image!house')}
                     style={styles.image} />
+                {spinner}
+                <Text style={styles.description}>
+                    {this.state.message}
+                </Text>
             </View>
         );
     }
