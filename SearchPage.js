@@ -148,7 +148,7 @@ class SearchPage extends Component {
                     <Text style={styles.buttonText}>Location</Text>
                 </TouchableHighlight>
                 <Image
-                    source={require('image!house')}
+                    source={require('./Images/house.png')}
                     style={styles.image} />
                 {spinner}
                 <Text style={styles.description}>
