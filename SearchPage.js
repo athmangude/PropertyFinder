@@ -33,7 +33,7 @@ function urlForQueryAndPage(key, value, pageNumber) {
     return 'http://api.nestoria.co.uk/api?'+queryString;
 }
 
-class SearchPage extends React.Component {
+class SearchPage extends Component {
     constructor(props) {
         super(props);
 
